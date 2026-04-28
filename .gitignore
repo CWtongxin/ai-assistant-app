@@ -1,1 +1,13 @@
 node_modules
+dist
+release
+新建文件夹
+*.exe
+*.asar
+*.dll
+*.pak
+*.dat
+*.bin
+*.png
+*.jpg
+*.jpeg
