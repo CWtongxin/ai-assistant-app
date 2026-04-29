@@ -12,17 +12,23 @@ function setupAutoUpdater() {
     return
   }
 
-  // 配置更新服务器（这里使用GitHub Releases作为示例）
-  // 实际使用时需要修改为你的GitHub仓库
-  autoUpdater.setFeedURL({
-    provider: 'github',
-    owner: 'your-username',
-    repo: 'ai-plugin-app',
-    private: false
-  })
+  // 延迟3秒后检查更新，避免阻塞启动
+  setTimeout(() => {
+    try {
+      // 配置更新服务器
+      autoUpdater.setFeedURL({
+        provider: 'github',
+        owner: 'CWtongxin',
+        repo: 'ai-assistant-app',
+        private: false
+      })
 
-  // 启动时自动检查更新
-  autoUpdater.checkForUpdatesAndNotify()
+      // 启动时自动检查更新
+      autoUpdater.checkForUpdatesAndNotify()
+    } catch (error) {
+      console.error('自动更新配置失败:', error)
+    }
+  }, 3000)
 
   // 更新可用时
   autoUpdater.on('update-available', (info) => {
