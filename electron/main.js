@@ -160,7 +160,7 @@ function createMenu() {
             dialog.showMessageBox({
               type: 'info',
               title: '关于 AI助手',
-              message: 'AI助手 v1.0.0',
+              message: `AI助手 v${app.getVersion()}`,
               detail: '超级全能AI助手\n支持Ollama本地模型和OpenAI API',
               buttons: ['确定']
             })
@@ -196,8 +196,9 @@ function createWindow() {
     width: 1200,
     height: 800,
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false
+      nodeIntegration: false,
+      contextIsolation: true,
+      preload: path.join(__dirname, 'preload.js')
     }
   })
 

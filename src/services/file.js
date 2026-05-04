@@ -1,5 +1,7 @@
 // 文件处理服务
 import * as pdfjsLib from 'pdfjs-dist';
+import mammoth from 'mammoth';
+import * as XLSX from 'xlsx';
 
 class FileService {
   // 读取文本文件
@@ -27,18 +29,26 @@ class FileService {
     return text;
   }
 
-  // 读取Word文件（需要mammoth.js）
+  // 读取Word文件
   async readWord(file) {
-    // 这里需要安装 mammoth.js
-    // npm install mammoth
-    throw new Error('请安装 mammoth.js: npm install mammoth');
+    const arrayBuffer = await file.arrayBuffer();
+    const result = await mammoth.extractRawText({ arrayBuffer });
+    return result.value;
   }
 
-  // 读取Excel文件（需要sheetjs）
+  // 读取Excel文件
   async readExcel(file) {
-    // 这里需要安装 xlsx
-    // npm install xlsx
-    throw new Error('请安装 xlsx: npm install xlsx');
+    const arrayBuffer = await file.arrayBuffer();
+    const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+    let text = '';
+    
+    for (const sheetName of workbook.SheetNames) {
+      const sheet = workbook.Sheets[sheetName];
+      const csv = XLSX.utils.sheet_to_csv(sheet);
+      text += `[${sheetName}]\n${csv}\n\n`;
+    }
+    
+    return text.trim();
   }
 
   // 图片转Base64

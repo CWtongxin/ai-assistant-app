@@ -3,6 +3,7 @@ import './App.css';
 import aiService from './services/ai';
 import ollamaService from './services/ollama';
 import fileService from './services/file';
+import './components/PDFConfig';
 
 // AI引擎类型
 const ENGINE_TYPES = {
@@ -97,12 +98,10 @@ function App() {
     }
 
     checkConnection(savedEngine);
-    
-    // 监听手动更新检查
-    if (window.require) {
-      const { ipcRenderer } = window.require('electron');
-      ipcRenderer.on('manual-check-update', async () => {
-        const result = await ipcRenderer.invoke('check-for-updates');
+
+    if (window.electronAPI) {
+      window.electronAPI.onManualCheckUpdate(async () => {
+        const result = await window.electronAPI.checkForUpdates();
         if (result.status === 'dev') {
           alert('开发模式不支持更新检查，请打包后测试');
         } else if (result.status === 'error') {
@@ -315,15 +314,13 @@ function App() {
 
   // 检查更新
   const checkForUpdates = async () => {
-    if (!window.require) {
+    if (!window.electronAPI) {
       alert('当前为开发模式，更新功能需在打包后使用');
       return;
     }
 
-    const { ipcRenderer } = window.require('electron');
-    
     try {
-      const result = await ipcRenderer.invoke('check-for-updates');
+      const result = await window.electronAPI.checkForUpdates();
       
       if (result.status === 'dev') {
         alert('开发模式不支持更新检查，请打包后测试');

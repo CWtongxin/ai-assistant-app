@@ -11,6 +11,7 @@ class AIService {
     this.apiKey = apiKey;
     const config = {
       apiKey: apiKey,
+      dangerouslyAllowBrowser: true,
     };
     
     if (baseURL) {
