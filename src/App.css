@@ -525,6 +525,35 @@ body {
   border: 1px solid #e0e0e0;
 }
 
+/* 无模型提示 */
+.no-models {
+  background: #fff3cd;
+  border: 1px solid #ffeeba;
+  border-radius: 4px;
+  padding: 16px;
+}
+
+.no-models p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #856404;
+}
+
+.no-models p.hint {
+  font-size: 12px;
+  color: #856404;
+}
+
+.no-models code {
+  display: block;
+  background: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 13px;
+  color: #000000;
+}
+
 .modal-actions {
   display: flex;
   gap: 10px;

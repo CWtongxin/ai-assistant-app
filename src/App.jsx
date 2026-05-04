@@ -71,11 +71,8 @@ function App() {
   const [engine, setEngine] = useState('ollama');
   const [apiKey, setApiKey] = useState('');
   const [ollamaURL, setOllamaURL] = useState('http://localhost:11434');
-  const [currentModel, setCurrentModel] = useState('deepseek-r1');
-  const [availableModels, setAvailableModels] = useState([
-    { id: 'deepseek-r1', name: 'DeepSeek R1' },
-    { id: 'qwen2.5', name: '通义千问 2.5' },
-  ]);
+  const [currentModel, setCurrentModel] = useState('');
+  const [availableModels, setAvailableModels] = useState([]);
   const [connectionStatus, setConnectionStatus] = useState('disconnected');
 
   // 初始化
@@ -83,15 +80,12 @@ function App() {
     const savedEngine = localStorage.getItem('ai_engine') || 'ollama';
     const savedApiKey = localStorage.getItem('openai_api_key') || '';
     const savedOllamaURL = localStorage.getItem('ollama_url') || 'http://localhost:11434';
-    const savedModel = localStorage.getItem('current_model') || 'deepseek-r1';
 
     setEngine(savedEngine);
     setApiKey(savedApiKey);
     setOllamaURL(savedOllamaURL);
-    setCurrentModel(savedModel);
 
     ollamaService.setBaseURL(savedOllamaURL);
-    ollamaService.setModel(savedModel);
 
     if (savedApiKey) {
       aiService.initialize(savedApiKey);
@@ -122,10 +116,32 @@ function App() {
             const models = await ollamaService.fetchAvailableModels();
             if (models.length > 0) {
               setAvailableModels(models);
+              
+              // 获取之前保存的模型
+              const savedModel = localStorage.getItem('current_model');
+              
+              // 如果保存的模型在已下载列表中，使用它；否则使用第一个模型
+              const validModel = models.find(m => m.id === savedModel);
+              const defaultModel = validModel || models[0];
+              
+              if (defaultModel) {
+                setCurrentModel(defaultModel.id);
+                ollamaService.setModel(defaultModel.id);
+                localStorage.setItem('current_model', defaultModel.id);
+              }
+            } else {
+              setAvailableModels([]);
+              setCurrentModel('');
+              console.log('未检测到已下载的Ollama模型');
             }
           } catch (e) {
-            console.log('使用默认模型列表');
+            console.log('获取模型列表失败:', e);
+            setAvailableModels([]);
+            setCurrentModel('');
           }
+        } else {
+          setAvailableModels([]);
+          setCurrentModel('');
         }
       } else {
         const connected = await aiService.checkConnection();
@@ -133,6 +149,8 @@ function App() {
       }
     } catch (error) {
       setConnectionStatus('disconnected');
+      setAvailableModels([]);
+      setCurrentModel('');
     }
   };
 
@@ -510,17 +528,25 @@ function App() {
               <>
                 <div className="setting-item">
                   <label>模型选择</label>
-                  <select
-                    value={currentModel}
-                    onChange={(e) => switchModel(e.target.value)}
-                    className="model-select"
-                  >
-                    {availableModels.map(model => (
-                      <option key={model.id} value={model.id}>
-                        {model.name}
-                      </option>
-                    ))}
-                  </select>
+                  {availableModels.length > 0 ? (
+                    <select
+                      value={currentModel}
+                      onChange={(e) => switchModel(e.target.value)}
+                      className="model-select"
+                    >
+                      {availableModels.map(model => (
+                        <option key={model.id} value={model.id}>
+                          {model.name}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <div className="no-models">
+                      <p>⚠️ 未检测到已下载的模型</p>
+                      <p className="hint">请先在命令行中下载模型，例如：</p>
+                      <code>ollama run deepseek-r1</code>
+                    </div>
+                  )}
                 </div>
 
                 <div className="setting-item">
