@@ -1,6 +1,6 @@
 {
   "name": "ai-plugin-app",
-  "version": "3.0.1.0.1",
+  "version": "3.0.2",
   "description": "AI插件桌面应用",
   "main": "electron/main.js",
   "scripts": {
