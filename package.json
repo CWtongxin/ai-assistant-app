@@ -1,6 +1,6 @@
 {
   "name": "ai-plugin-app",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "AI插件桌面应用",
   "main": "electron/main.js",
   "scripts": {
@@ -39,6 +39,14 @@
     "directories": {
       "output": "release"
     },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "src/**/*",
+      "!src/**/*.css",
+      "!**/node_modules/**/*",
+      "!**/.ollama/**/*"
+    ],
     "publish": {
       "provider": "github",
       "owner": "CWtongxin",
